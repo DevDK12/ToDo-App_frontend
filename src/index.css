@@ -98,7 +98,7 @@
     }
 
     .title {
-        @apply subtitle text-base xs:text-xl sm:text-2xl text-center
+        @apply subtitle text-base xs:text-xl sm:text-2xl
     }
 
     .tosscoin {
