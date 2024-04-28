@@ -1,7 +1,6 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    FaSearch,
     FaSignInAlt,
     FaSignOutAlt,
 } from "react-icons/fa";
@@ -28,7 +27,7 @@ const Header = () => {
 
     const { user } = useSelector((state: RootState) => state.userSlice);
 
-    const imageUrl = user?.image || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJxA5cTf-5dh5Eusm0puHbvAhOrCRPtckzjA&usqp';
+    const imageUrl =  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJxA5cTf-5dh5Eusm0puHbvAhOrCRPtckzjA&usqp';
 
 
 
@@ -60,9 +59,10 @@ const Header = () => {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink className={({ isActive }) => isActive ? "text-cyan-500" : "hover:text-cyan-200"} to={"/search"}>
-                            <FaSearch />
-                        </NavLink>
+                        <button 
+                            >
+                            <FaSignOutAlt onClick={logoutHandler} />
+                        </button>
                     </li>
                     <li>
                         {user?._id ? (

@@ -1,12 +1,31 @@
 import Task, { PropsType } from "@/components/ui/Task"
-import { useState } from "react"
-import {v4 as uuidv4} from 'uuid';
+import { useGetAllTasksQuery } from "@/redux/api/taskApi";
+import { RootState } from "@/redux/store";
+import { TaskType } from "@/Types/task-types";
+import { useEffect, useState } from "react"
+import { useSelector } from "react-redux";
+import { v4 as uuidv4 } from 'uuid';
 
 const Home = () => {
 
-    const [tasks, setTasks] = useState<PropsType[]>([
 
-    ])
+    const { token } = useSelector((state: RootState) => state.userSlice);
+
+    const { data, isLoading, isError, error, isSuccess } = useGetAllTasksQuery(token!.access_token);
+
+
+
+    const [tasks, setTasks] = useState<PropsType[]>([]);
+
+
+    useEffect(() => {
+        if(isSuccess && data){
+            setTasks(data.data.tasks.map((task: TaskType) => ({
+                ...task,
+                isNew: false
+            })));
+        }
+    },[isSuccess, data])
 
 
 
@@ -28,26 +47,30 @@ const Home = () => {
                         },
                         ...prev
                         ]
-                    ) ) }
+                    ))}
                 >+ New Task</button>
             </div>
 
-            <div className="flex flex-col gap-4">
-                {tasks.map(task => {
-                    return (
-                        <Task
-                            key={task._id}
-                            _id={task._id}
-                            isFinished={task.isFinished}
-                            msg={task.msg}
-                            date={task.date}
-                            tags={task.tags}
-                            isNew={task.isNew}
-                        />
-                    )
-                })}
-
-            </div>
+            {isLoading && <p>Loading Tasks...</p>}
+            {isError && <p>{(error as Error).message}</p>}
+            {isSuccess && tasks.length === 0 && <p>No task created </p>}
+            {isSuccess &&
+                <div className="flex flex-col gap-4">
+                    {tasks.map(task => {
+                        return (
+                            <Task
+                                key={task._id}
+                                _id={task._id}
+                                isFinished={task.isFinished}
+                                msg={task.msg}
+                                date={task.date}
+                                tags={task.tags}
+                                isNew={task.isNew}
+                            />
+                        )
+                    })}
+                </div>
+            }
         </div>
     )
 }

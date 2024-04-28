@@ -9,6 +9,6 @@ export type TaskType = {
 
 export type tagType = {
     msg: string,
-    id?: string,
+    _id?: string,
     onClick?: () => void,
 } 

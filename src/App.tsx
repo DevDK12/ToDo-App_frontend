@@ -110,9 +110,8 @@ const App = () => {
 
 
       <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
         <Route element={<RequireAuth />} >
-
+          <Route path="/" element={<Home />} />
         </Route>
       </Route>
 

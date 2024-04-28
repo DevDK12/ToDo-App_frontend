@@ -3,7 +3,7 @@ import { LoginResponse, MesssageResponse, UserResponse } from "../../Types/apiTy
 import { IRegisterUserApi, ILoginUserApi } from "../../Types/user-types";
 
 
-const server = import.meta.env.VITE_SERVER;
+export const server = import.meta.env.VITE_SERVER;
 
 export const userApi = createApi({
     reducerPath: "userApi",
