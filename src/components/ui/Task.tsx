@@ -1,39 +1,60 @@
-import { CiCalendar } from "react-icons/ci"
-import Tags, { tagType } from "./tags"
-import { useState } from "react"
+import { CiCalendar, CiEdit } from "react-icons/ci"
+import { TiTickOutline } from "react-icons/ti";
+import Tags from "./tags"
+import { useRef, useState } from "react"
+import { v4 as uuidv4 } from 'uuid';
+import { TaskType } from "@/Types/task-types";
+import { getDateString } from "@/utils/functions";
 
 
 
 
-const getDateString = (dateStr: string) => {
-    const today = new Date().toLocaleDateString('en-US', {
-        weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
-    });
-    const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString('en-US', {
-        weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
-    });
-    const date = new Date(dateStr);
-    const formattedDate = new Intl.DateTimeFormat('en-US', {
-        weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
-    }).format(date);
-    if (today === formattedDate) return 'Today';
-    if (tomorrow === formattedDate) return 'Tomorrow';
-    return `${formattedDate.slice(0, 3)} ${formattedDate.slice(7)}`;
+export type PropsType = TaskType & {
+    isNew: boolean,
 }
 
 
-type PropsType = {
-    msg: string,
-    date: string,
-    tags: tagType[]
-}
 
 
-const Task = ({ msg, date, tags }: PropsType) => {
 
-    const [isFinished, setIsFinished] = useState<boolean>(false);
+const Task = ({msg, date, tags, _id, isFinished, isNew} : PropsType) => {
 
-    const formatedDate = getDateString(date);
+    const [data, setData] = useState<TaskType>({
+        _id: _id,
+        msg: msg,
+        date: date,
+        tags: tags,
+        isFinished: isFinished,
+    })
+
+    const dateInputRef = useRef<HTMLInputElement>(null);
+    const [tag, setTag] = useState<string>("");
+    const [isCompleted, setIsCompleted] = useState<boolean>(isFinished);
+    const [isEditing, setIsEditing] = useState<boolean>(isNew);
+
+    const formatedDate = getDateString(new Date(data.date));
+
+
+    const submitHandler = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!tag || tag === "") return;
+        const len = data.tags.length;
+        if (len > 5) return;
+
+
+        setData(prev => ({
+            ...prev,
+            tags: [
+                ...prev.tags,
+                {
+                    id: `${uuidv4()}`,
+                    msg: tag,
+                }
+            ]
+        }));
+        setTag("");
+    }
 
 
     return (
@@ -42,27 +63,69 @@ const Task = ({ msg, date, tags }: PropsType) => {
             <input
                 type="checkbox"
                 className="w-6 h-6 outline-none checked:text-violet-500"
-                onClick={() => { setIsFinished(prev => !prev) }}
+                checked={isCompleted}
+                onChange={() => { setIsCompleted(prev => !prev) }}
             />
-            <h2 className={`subtitle col-start-2 col-end-12 ${isFinished ? 'line-through' : ''}`}>{msg}</h2>
-            {!isFinished &&
-                <>
-                    <div className="flex items-center gap-2 col-start-2 col-end-12"><CiCalendar className="text-orange-400 " /><p className="text-orange-400 text-sm">{formatedDate}</p></div>
-                    <div className="col-start-2 col-end-12 flex gap-3">
-                        {tags.map(tag => {
-                            return (
-                                <Tags
-                                    key={tag.msg}
-                                    msg={tag.msg}
-                                    variant={tag.variant}
-                                />
-                            );
-                        })}
 
+
+            <div className="col-start-2 col-end-11 flex gap-4">
+                {isEditing ?
+                    <input
+                        type="text"
+                        value={data.msg}
+                        onChange={(e) => setData(prev => ({ ...prev, msg: e.target.value }))}
+                        className="outline-none subtitle bg-primary-200 border-b"
+                    /> :
+                    <h2 className={`subtitle ${isCompleted ? 'line-through' : ''}`}>{data.msg} </h2>
+                }
+                <button onClick={() => { setIsEditing(prev => !prev) }}>
+                    {isEditing ? !isCompleted && <TiTickOutline className="text-xl" /> : !isCompleted && <CiEdit className="text-lg" />}
+                </button>
+            </div>
+
+            {!isCompleted &&
+                <>
+                    <div className="col-start-2 col-end-12" onClick={() => dateInputRef.current?.click()}>
+                        {isEditing && <input
+                            type="date"
+                            ref={dateInputRef}
+                            className="outline-none subtitle bg-primary-200"
+                            value={data.date.toISOString().slice(0, 10)}
+                            onChange={(e) => setData(prev => ({ ...prev, date: new Date(e.target.value)}))}
+                        />
+                        }
+                        {!isEditing &&
+                            <div className="flex items-center gap-2"><CiCalendar className="text-orange-400 " /><p className="text-orange-400 text-sm">{formatedDate}</p></div>
+                        }
                     </div>
+                    {!isEditing &&
+                        <div className="col-start-2 col-end-12 flex gap-4">
+                            {data.tags.map(tag => <Tags key={tag.id} msg={tag.msg} />)}
+                        </div>
+                    }
+                    {isEditing &&
+                        <div className="mt-4 col-start-2 col-end-12 border-b flex gap-2 py-1">
+                            {data.tags.map(tag => <Tags 
+                                key={tag.id} 
+                                onClick={() => setData(prev => ({...prev, tags: prev.tags.filter(t => t.id !== tag.id)}))}
+                                msg={tag.msg} 
+                            />
+                            )}
+                            <input
+                                className="outline-none bg-primary-200"
+                                type="text"
+                                onKeyPress={(e) =>  e.key === 'Enter' ? submitHandler(e) : null}
+                                value={tag}
+                                onChange={(e) => setTag(e.target.value)}
+                            />
+
+                        </div>
+                    }
                 </>
+
             }
         </div>
+
     )
 }
 

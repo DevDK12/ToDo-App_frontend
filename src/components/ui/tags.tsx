@@ -1,11 +1,18 @@
+import { tagType } from "@/Types/task-types";
+import { useMemo } from "react";
 
-export type tagType = {
-    msg: string,
-    variant: "violet" | "red" | "green" | "orange" | "blue",
-    id?: string,
-} 
 
-const Tags = ({msg, variant} : tagType) => {
+
+
+function randomVariant() {
+    const variants = ["violet", "red", "green", "orange", "blue"];
+    return variants[Math.floor(Math.random() * variants.length)];
+}
+
+
+const Tags = ({msg, onClick} : tagType) => {
+
+    const variant = useMemo(()=>randomVariant(),[]);
 
     let bgColor;
     let textColor;
@@ -35,9 +42,17 @@ const Tags = ({msg, variant} : tagType) => {
         textColor = 'text-blue-500'
         dotColor = 'bg-blue-500'
     }
+
+
     
     return (
-        <div className={`${bgColor} ${textColor} flex items-center gap-2 rounded-md px-2 max-w-max `}><div className={`w-2 h-2 rounded-full ${dotColor}`}></div>{msg}</div>
+        <div 
+            onClick={onClick ? onClick : undefined}
+            className={`${bgColor} ${textColor} flex items-center gap-2 rounded-md px-2 max-w-max `}
+        >
+            <div className={`w-2 h-2 rounded-full ${dotColor}`}></div>
+            {msg}
+        </div>
     )
 }
 

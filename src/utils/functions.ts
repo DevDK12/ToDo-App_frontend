@@ -1,18 +1,16 @@
-import moment from 'moment';
 
-export const lastMonths = () => {
-
-    const currentDate = moment();
-    currentDate.date(1);
-
-    const last6months = [];
-    const last12months = [];
-    for (let i = 0; i < 6; i++) {
-        last6months.unshift(currentDate.clone().subtract(i, 'months').format('MMM'));
-    }
-    for (let i = 0; i < 12; i++) {
-        last12months.unshift(currentDate.clone().subtract(i, 'months').format('MMM'));
-    }
-
-    return [last6months, last12months];
+export const getDateString = (dateStr: Date) => {
+    const today = new Date().toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
+    });
+    const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
+    });
+    const date = new Date(dateStr);
+    const formattedDate = new Intl.DateTimeFormat('en-US', {
+        weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
+    }).format(date);
+    if (today === formattedDate) return 'Today';
+    if (tomorrow === formattedDate) return 'Tomorrow';
+    return `${formattedDate.slice(0, 3)} ${formattedDate.slice(7)}`;
 }

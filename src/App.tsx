@@ -54,7 +54,6 @@ const App = () => {
     }
     catch(err){
       if((err as Error).message === 'Unauthorized'){
-        //_ Redirect to unauthroized page 
         toast.error((err as Error).message);
       }
       dispatch(deleteUser());
@@ -112,7 +111,6 @@ const App = () => {
 
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
-
         <Route element={<RequireAuth />} >
 
         </Route>
