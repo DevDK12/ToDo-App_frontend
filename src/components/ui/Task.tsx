@@ -8,6 +8,7 @@ import { getDateString } from "@/utils/functions";
 import { useDeleteTaskMutation, useNewTaskMutation, useUpdateTaskMutation } from "@/redux/api/taskApi";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { BiTrash } from "react-icons/bi";
 
 
 
@@ -52,7 +53,7 @@ const Task = ({ msg, date, tags, _id, isFinished, isNew }: PropsType) => {
     const submitHandler = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!tag ) return;
+        if (!tag) return;
         const len = data.tags.length;
         if (len > 5) return;
 
@@ -89,7 +90,7 @@ const Task = ({ msg, date, tags, _id, isFinished, isNew }: PropsType) => {
                 }
             });
         }
-        else{
+        else {
             await newTask({
                 token: token!.access_token,
                 task: {
@@ -131,7 +132,7 @@ const Task = ({ msg, date, tags, _id, isFinished, isNew }: PropsType) => {
 
     return (
 
-        <div className="border border-white  rounded-md px-6 py-4 grid grid-cols-12 gap-3">
+        <div className="border border-white rounded-md px-6 py-4 grid grid-cols-12 gap-3">
             <input
                 type="checkbox"
                 className="w-6 h-6 outline-none checked:text-violet-500"
@@ -155,10 +156,12 @@ const Task = ({ msg, date, tags, _id, isFinished, isNew }: PropsType) => {
                         <TiTickOutline className="text-xl" />
                     </button>
 
-                    : !isCompleted && <button onClick={() => { setIsEditing(prev => !prev) }}> <CiEdit className="text-lg" />
+                    : !isCompleted &&
+                    <button onClick={() => { setIsEditing(prev => !prev) }}> <CiEdit className="text-lg" />
                     </button>
 
                 }
+                <button onClick={deleteHandler}><BiTrash className="text-md text-red-500" /></button>
             </div>
 
             {!isCompleted &&

@@ -19,13 +19,13 @@ const Home = () => {
 
 
     useEffect(() => {
-        if(isSuccess && data){
+        if (isSuccess && data) {
             setTasks(data.data.tasks.map((task: TaskType) => ({
                 ...task,
                 isNew: false
             })));
         }
-    },[isSuccess, data])
+    }, [isSuccess, data])
 
 
 
@@ -53,10 +53,10 @@ const Home = () => {
 
             {isLoading && <p>Loading Tasks...</p>}
             {isError && <p>{(error as Error).message}</p>}
-            {isSuccess && tasks.length === 0 && <p>No task created </p>}
-            {isSuccess &&
-                <div className="flex flex-col gap-4">
-                    {tasks.map(task => {
+            <div className="flex flex-col gap-4  md:w-2/3 lg:w-3/5 xl:w-1/2 mx-auto h-[400px]">
+                {isSuccess && tasks.length === 0 && <div className="w-full h-full grid place-items-center"><p>No task created </p> </div>}
+                {isSuccess &&
+                    tasks.map(task => {
                         return (
                             <Task
                                 key={task._id}
@@ -68,9 +68,9 @@ const Home = () => {
                                 isNew={task.isNew}
                             />
                         )
-                    })}
-                </div>
-            }
+                    })
+                }
+            </div>
         </div>
     )
 }

@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
     FaSignInAlt,
@@ -53,11 +53,6 @@ const Header = () => {
                     </Link>
                 </div>
                 <ul className="header flex justify-end items-center gap-4 xs:gap-7 sm:gap-10">
-                    <li>
-                        <NavLink className={({ isActive }) => isActive ? "text-cyan-500" : "hover:text-cyan-200"} to={"/"}>
-                            HOME
-                        </NavLink>
-                    </li>
                     <li>
                         <button 
                             >
